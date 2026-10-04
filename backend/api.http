@@ -1,0 +1,245 @@
+# ==============================================================
+# SISTEMA ESCOLAR - ARCHIVO DE PRUEBAS MANUALES (REST CLIENT)
+# Extensión recomendada: REST Client (Huachao Mao) para VS Code
+# ==============================================================
+
+@baseUrl = http://localhost:3000/api
+@contentType = application/json
+
+### 1. Diagnóstico y Salud del Servidor
+GET {{baseUrl}}/health
+
+### ============================================================
+### 2. AUTENTICACIÓN
+### ============================================================
+
+### 2.1 Login Exitoso como Administrador Principal (Admin)
+# @name loginAdmin
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "usuario": "Admin",
+  "password": "Admin123!"
+}
+
+### 2.2 Login Exitoso como Super Administrador Root
+# @name loginRoot
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "usuario": "Root",
+  "password": "Root123!"
+}
+
+### 2.3 Intento de Login con Contraseña Incorrecta
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "usuario": "Admin",
+  "password": "PasswordInvalido123"
+}
+
+### 2.4 Consultar Usuario en Sesión (Requiere cookie activa)
+GET {{baseUrl}}/auth/me
+
+### 2.5 Cambio de Contraseña del Usuario Autenticado
+PUT {{baseUrl}}/auth/me/password
+Content-Type: {{contentType}}
+
+{
+  "passwordActual": "Admin123!",
+  "nuevoPassword": "AdminNuevo2026!"
+}
+
+### 2.6 Revertir Contraseña de Admin a la Original
+PUT {{baseUrl}}/auth/me/password
+Content-Type: {{contentType}}
+
+{
+  "passwordActual": "AdminNuevo2026!",
+  "nuevoPassword": "Admin123!"
+}
+
+### 2.7 Cierre de Sesión (Logout)
+POST {{baseUrl}}/auth/logout
+
+### ============================================================
+### 3. GESTIÓN DE USUARIOS (Exclusivo Administradores)
+### ============================================================
+
+### 3.1 Listar Todos los Usuarios Registrados
+GET {{baseUrl}}/usuarios
+
+### 3.2 Crear Usuario con Intento Malicioso de Escalamiento a 'admin'
+# Nota: La API debe ignorar "rol": "admin" y crear el usuario con rol "usuario"
+POST {{baseUrl}}/usuarios
+Content-Type: {{contentType}}
+
+{
+  "nombre": "Carlos Estudiante",
+  "usuario": "cestudiante",
+  "correo": "carlos.estudiante@escolar.edu",
+  "password": "Password123!",
+  "rol": "admin"
+}
+
+### 3.3 Actualizar Datos de un Usuario (Ej. id 3)
+PUT {{baseUrl}}/usuarios/3
+Content-Type: {{contentType}}
+
+{
+  "nombre": "Carlos Estudiante Modificado",
+  "correo": "carlos.modificado@escolar.edu"
+}
+
+### 3.4 Intento de Eliminar un Administrador (Dispara Trigger de MariaDB)
+DELETE {{baseUrl}}/usuarios/2
+
+### 3.5 Eliminar Usuario Común (Ej. id 3)
+DELETE {{baseUrl}}/usuarios/3
+
+### ============================================================
+### 4. CATÁLOGO DE MATERIAS
+### ============================================================
+
+### 4.1 Listar Materias
+GET {{baseUrl}}/materias
+
+### 4.2 Crear Materia
+# @name crearMateria
+POST {{baseUrl}}/materias
+Content-Type: {{contentType}}
+
+{
+  "clave": "MAT-201",
+  "nombre": "Estructuras de Datos",
+  "creditos": 8,
+  "descripcion": "Árboles, grafos y algoritmos de ordenamiento"
+}
+
+### 4.3 Consultar Materia por ID (Ej. id 1)
+GET {{baseUrl}}/materias/1
+
+### 4.4 Actualizar Materia
+PUT {{baseUrl}}/materias/1
+Content-Type: {{contentType}}
+
+{
+  "clave": "MAT-201",
+  "nombre": "Estructuras de Datos Avanzadas",
+  "creditos": 10,
+  "descripcion": "Grafos dirigidos y estructuras probabilísticas"
+}
+
+### 4.5 Eliminar Materia
+DELETE {{baseUrl}}/materias/1
+
+### ============================================================
+### 5. CATÁLOGO DE MAESTROS
+### ============================================================
+
+### 5.1 Listar Maestros
+GET {{baseUrl}}/maestros
+
+### 5.2 Crear Maestro
+POST {{baseUrl}}/maestros
+Content-Type: {{contentType}}
+
+{
+  "numero_empleado": "EMP-500",
+  "nombre": "Laura",
+  "apellidos": "Hernández Ramos",
+  "correo": "laura.hernandez@escolar.edu",
+  "telefono": "5599887766",
+  "especialidad": "Sistemas Distribuidos"
+}
+
+### 5.3 Consultar Maestro por ID (Ej. id 1)
+GET {{baseUrl}}/maestros/1
+
+### 5.4 Actualizar Maestro
+PUT {{baseUrl}}/maestros/1
+Content-Type: {{contentType}}
+
+{
+  "numero_empleado": "EMP-500",
+  "nombre": "Laura Elena",
+  "apellidos": "Hernández Ramos",
+  "correo": "laura.hernandez@escolar.edu",
+  "telefono": "5511223344",
+  "especialidad": "Arquitectura de Software"
+}
+
+### 5.5 Eliminar Maestro
+DELETE {{baseUrl}}/maestros/1
+
+### ============================================================
+### 6. CATÁLOGO DE GRUPOS
+### ============================================================
+
+### 6.1 Listar Grupos con Datos de Materia y Maestro Vinculados
+GET {{baseUrl}}/grupos
+
+### 6.2 Crear Grupo (Asegúrate de que materia_id y maestro_id existan)
+POST {{baseUrl}}/grupos
+Content-Type: {{contentType}}
+
+{
+  "codigo": "G-500",
+  "materia_id": 1,
+  "maestro_id": 1,
+  "semestre": "2026-1",
+  "horario": "Lun y Mié 16:00 - 18:00",
+  "aula": "Laboratorio 2"
+}
+
+### 6.3 Consultar Grupo por ID
+GET {{baseUrl}}/grupos/1
+
+### 6.4 Eliminar Grupo
+DELETE {{baseUrl}}/grupos/1
+
+### ============================================================
+### 7. CATÁLOGO DE ALUMNOS
+### ============================================================
+
+### 7.1 Listar Alumnos con Grupo Asociado
+GET {{baseUrl}}/alumnos
+
+### 7.2 Registrar Alumno
+POST {{baseUrl}}/alumnos
+Content-Type: {{contentType}}
+
+{
+  "matricula": "ALU-5001",
+  "nombre": "Diego",
+  "apellidos": "Santillán Flores",
+  "correo": "diego.santillan@alumno.edu",
+  "grupo_id": null,
+  "fecha_nacimiento": "2005-08-14"
+}
+
+### 7.3 Consultar Alumno por ID
+GET {{baseUrl}}/alumnos/1
+
+### 7.4 Eliminar Alumno
+DELETE {{baseUrl}}/alumnos/1
+
+### ============================================================
+### 8. PRUEBAS DE SEGURIDAD ACTIVAS
+### ============================================================
+
+### 8.1 Inyección SQL en Login (Debe ser mitigada y responder 401)
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "usuario": "' OR '1'='1' --",
+  "password": "' OR '1'='1"
+}
+
+### 8.2 Acceso no Autorizado sin Cookie (Debe responder 401)
+GET {{baseUrl}}/materias

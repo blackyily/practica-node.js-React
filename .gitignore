@@ -1,0 +1,15 @@
+# Dependencias
+node_modules/
+dist/
+
+# Entornos y secretos
+.env
+.env.local
+
+# Subidas locales
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Sistema operativo
+.DS_Store
+Thumbs.db

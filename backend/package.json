@@ -1,0 +1,33 @@
+{
+  "name": "lab-escolar-backend",
+  "version": "1.0.0",
+  "description": "Backend API para el Sistema Escolar con Express y MariaDB",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test test/api.test.js test/security.test.js",
+    "seed": "node src/scripts/seed.js"
+  },
+  "keywords": [
+    "express",
+    "mariadb",
+    "jwt",
+    "escuela"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^18.0.4",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.7.0",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.4.0",
+    "mysql2": "^3.24.4",
+    "zod": "^4.6.5"
+  }
+}
